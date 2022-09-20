@@ -2,8 +2,8 @@ package rezende.israel.orgs.ui.activity
 
 import android.app.Activity
 import android.os.Bundle
-import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import rezende.israel.orgs.R
@@ -11,12 +11,12 @@ import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 import java.math.BigDecimal
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity(R.layout.activity_main) {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Toast.makeText(this, "App em construção... " + ("\u26A0"), Toast.LENGTH_LONG).show()
-        setContentView(R.layout.activity_main)
+
 
 //        val nome = findViewById<TextView>(R.id.nome)
 //        nome.text = "Cesta de Frutas"
@@ -43,8 +43,6 @@ class MainActivity : Activity() {
                 )
             )
         )
-
         recyclerView.layoutManager = LinearLayoutManager(this)
-
     }
 }
