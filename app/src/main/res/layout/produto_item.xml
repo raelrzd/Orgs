@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/nome"
+        android:id="@+id/produto_item_nome"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_margin="16dp"
@@ -16,21 +16,21 @@
         tools:text="Salada de frutas" />
 
     <TextView
-        android:id="@+id/descricao"
+        android:id="@+id/produto_item_descricao"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/nome"
-        app:layout_constraintStart_toStartOf="@+id/nome"
-        app:layout_constraintTop_toBottomOf="@+id/nome"
+        app:layout_constraintEnd_toEndOf="@+id/produto_item_nome"
+        app:layout_constraintStart_toStartOf="@+id/produto_item_nome"
+        app:layout_constraintTop_toBottomOf="@+id/produto_item_nome"
         tools:text="Laranja, manga e uva" />
 
     <TextView
-        android:id="@+id/valor"
+        android:id="@+id/produto_item_valor"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/descricao"
-        app:layout_constraintStart_toStartOf="@+id/descricao"
-        app:layout_constraintTop_toBottomOf="@+id/descricao"
+        app:layout_constraintEnd_toEndOf="@+id/produto_item_descricao"
+        app:layout_constraintStart_toStartOf="@+id/produto_item_descricao"
+        app:layout_constraintTop_toBottomOf="@+id/produto_item_descricao"
         tools:text="R$ 19,99" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
