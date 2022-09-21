@@ -1,11 +1,15 @@
 package rezende.israel.orgs.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import rezende.israel.orgs.R
+import rezende.israel.orgs.dao.ProdutosDAO
 import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 import java.math.BigDecimal
@@ -16,32 +20,20 @@ class MainActivity : AppCompatActivity(R.layout.activity_main) {
         super.onCreate(savedInstanceState)
         Toast.makeText(this, "App em construção... " + ("\u26A0"), Toast.LENGTH_LONG).show()
 
+        val botaoAdd = findViewById<FloatingActionButton>(R.id.floatingActionButton)
+        botaoAdd.setOnClickListener {
+            val intent = Intent(this, FormularioProdutoActivity::class.java)
+            startActivity(intent)
+        }
+    }
 
-//        val nome = findViewById<TextView>(R.id.nome)
-//        nome.text = "Cesta de Frutas"
-//        val descricao = findViewById<TextView>(R.id.descricao)
-//        descricao.text = "Laranja, morango e uva"
-//        val valor = findViewById<TextView>(R.id.valor)
-//        valor.text = "R$ 19.90"
-
+    override fun onResume() {
+        super.onResume()
+        val dao = ProdutosDAO()
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerview)
         recyclerView.adapter = ListaProdutosAdapter(
-            context = this, produtos = listOf(
-                Produto(
-                    nome = "Teste 1",
-                    descricao = "Descricao teste 1",
-                    valor = BigDecimal("19.99")
-                ), Produto(
-                    nome = "Teste 2",
-                    descricao = "Descricao teste 2",
-                    valor = BigDecimal("29.99")
-                ), Produto(
-                    nome = "Teste 3",
-                    descricao = "Descricao teste 3",
-                    valor = BigDecimal("39.99")
-                )
-            )
-        )
+            context = this, produtos = dao.buscaTodos())
+        Log.i("MainActivity", "onCreate: ${dao.buscaTodos()}")
         recyclerView.layoutManager = LinearLayoutManager(this)
     }
 }
