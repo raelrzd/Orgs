@@ -1,10 +1,7 @@
 package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
-import android.widget.Button
-import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
-import rezende.israel.orgs.R
 import rezende.israel.orgs.dao.ProdutosDAO
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
 import rezende.israel.orgs.model.Produto

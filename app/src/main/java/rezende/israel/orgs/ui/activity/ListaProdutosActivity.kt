@@ -2,13 +2,9 @@ package rezende.israel.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import rezende.israel.orgs.R
 import rezende.israel.orgs.dao.ProdutosDAO
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
