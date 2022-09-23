@@ -3,9 +3,10 @@ package rezende.israel.orgs.ui.activity
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import rezende.israel.orgs.R
+import coil.load
 import rezende.israel.orgs.dao.ProdutosDAO
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
+import rezende.israel.orgs.databinding.FormularioImagemBinding
 import rezende.israel.orgs.model.Produto
 import java.math.BigDecimal
 
@@ -21,9 +22,17 @@ class FormularioProdutoActivity : AppCompatActivity() {
         configuraBotaoSalvar()
 
         binding.activityFormularioProdutoImagem.setOnClickListener {
+            val bindingFormularioImagem = FormularioImagemBinding.inflate(layoutInflater)
+            bindingFormularioImagem.formularioImagemBotaoCarregar.setOnClickListener {
+                val url = bindingFormularioImagem.formularioImagemUrl.text.toString()
+                bindingFormularioImagem.formularioImagemImageview.load(url)
+            }
             AlertDialog.Builder(this)
-                .setView(R.layout.formulario_imagem)
-                .setPositiveButton("Confirmar") { _, _ -> }
+                .setView(bindingFormularioImagem.root)
+                .setPositiveButton("Confirmar") { _, _ ->
+                    val url = bindingFormularioImagem.formularioImagemUrl.text.toString()
+                    binding.activityFormularioProdutoImagem.load(url)
+                }
                 .setNegativeButton("Cancelar") { _, _ -> }
                 .show()
         }
