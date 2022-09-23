@@ -3,6 +3,7 @@ package rezende.israel.orgs.ui.activity
 import android.content.Intent
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import rezende.israel.orgs.dao.ProdutosDAO
@@ -23,6 +24,11 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
+
+        AlertDialog.Builder(this).setTitle("Titulo de teste").setMessage("Mensagem de teste")
+            .setPositiveButton("Confirmar") { _, _ -> }
+            .setNegativeButton("Cancelar") { _, _ -> }
+            .show()
     }
 
     private fun configuraFab() {
@@ -43,7 +49,6 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     private fun configuraRecyclerView() {
-        val dao = ProdutosDAO()
         val recyclerView = binding.activityListaProdutosRecyclerview
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
