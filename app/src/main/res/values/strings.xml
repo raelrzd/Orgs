@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Orgs</string>
+    <string name="app_name">Outlet</string>
     <string name="botao_adicionar_produto">Botao Adicionar Produto</string>
     <string name="imagem_descritiva_do_produto">Imagem descritiva do produto</string>
     <string name="add_produto_fab">Add Produto</string>

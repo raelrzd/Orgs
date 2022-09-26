@@ -12,7 +12,7 @@ import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 class ListaProdutosActivity : AppCompatActivity() {
 
     private val dao = ProdutosDAO()
-    private val adapter = ListaProdutosAdapter(context = this, produtos = dao.buscaTodos())
+    private val adapter = ListaProdutosAdapter(produtos = dao.buscaTodos(), context = this,)
     private val binding by lazy {
         ActivityListaProdutosBinding.inflate(layoutInflater)
     }
@@ -46,5 +46,13 @@ class ListaProdutosActivity : AppCompatActivity() {
         val recyclerView = binding.activityListaProdutosRecyclerview
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
+
+        adapter.quandoClicaNoItem = {
+            val intent = Intent(this, DetalhesProdutoActivity::class.java).apply {
+                putExtra(CHAVE_PRODUTO, it)
+            }
+            startActivity(intent)
+        }
+
     }
 }

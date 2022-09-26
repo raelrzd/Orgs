@@ -6,29 +6,39 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import rezende.israel.orgs.databinding.ProdutoItemBinding
+import rezende.israel.orgs.extensions.formataParaMoedaBr
 import rezende.israel.orgs.extensions.tentaCarregarImagem
 import rezende.israel.orgs.model.Produto
-import java.math.BigDecimal
-import java.text.NumberFormat
-import java.util.*
 
 class ListaProdutosAdapter(
     produtos: List<Produto>,
-    private val context: Context
+    private val context: Context,
+    var quandoClicaNoItem: (produto: Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {
 
     private val produtos = produtos.toMutableList()
 
-    class ViewHolder(private val binding: ProdutoItemBinding) :
+    inner class ViewHolder(private val binding: ProdutoItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
+        private lateinit var produto: Produto
+
+        init {
+            itemView.setOnClickListener{
+                if (::produto.isInitialized){
+                    quandoClicaNoItem(produto)
+                }
+            }
+        }
+
         fun vincula(produto: Produto) {
+            this.produto = produto
             val nome = binding.produtoItemNome
             nome.text = produto.nome
             val descricao = binding.produtoItemDescricao
             descricao.text = produto.descricao
             val valor = binding.produtoItemValor
-            val valorEmMoedaBr = formataParaMoedaBr(produto.valor)
+            val valorEmMoedaBr: String = produto.valor.formataParaMoedaBr()
             valor.text = valorEmMoedaBr
 
             val visibilidade = if (produto.imagem != null) {
@@ -41,10 +51,6 @@ class ListaProdutosAdapter(
             binding.produtoItemImageview.tentaCarregarImagem(produto.imagem)
         }
 
-        private fun formataParaMoedaBr(valor: BigDecimal): String {
-            val formatador = NumberFormat.getCurrencyInstance(Locale("pt", "br"))
-            return formatador.format(valor)
-        }
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
