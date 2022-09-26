@@ -2,10 +2,11 @@ package rezende.israel.orgs.ui.adapter
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import coil.load
 import rezende.israel.orgs.databinding.ProdutoItemBinding
+import rezende.israel.orgs.extensions.tentaCarregarImagem
 import rezende.israel.orgs.model.Produto
 import java.math.BigDecimal
 import java.text.NumberFormat
@@ -29,7 +30,15 @@ class ListaProdutosAdapter(
             val valor = binding.produtoItemValor
             val valorEmMoedaBr = formataParaMoedaBr(produto.valor)
             valor.text = valorEmMoedaBr
-            binding.produtoItemImageview.load("https://cdn.awsli.com.br/600x700/586/586206/produto/35510082/cbbc13160e.jpg")
+
+            val visibilidade = if (produto.imagem != null) {
+                View.VISIBLE
+            } else {
+                View.GONE
+            }
+
+            binding.produtoItemImageview.visibility = visibilidade
+            binding.produtoItemImageview.tentaCarregarImagem(produto.imagem)
         }
 
         private fun formataParaMoedaBr(valor: BigDecimal): String {
@@ -44,7 +53,7 @@ class ListaProdutosAdapter(
         return ViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: ListaProdutosAdapter.ViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val produto = produtos[position]
         holder.vincula(produto)
     }

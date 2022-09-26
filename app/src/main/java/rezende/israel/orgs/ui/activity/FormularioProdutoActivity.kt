@@ -1,13 +1,12 @@
 package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import coil.load
 import rezende.israel.orgs.dao.ProdutosDAO
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
-import rezende.israel.orgs.databinding.FormularioImagemBinding
+import rezende.israel.orgs.extensions.tentaCarregarImagem
 import rezende.israel.orgs.model.Produto
+import rezende.israel.orgs.ui.dialog.FormularioImagemDialog
 import java.math.BigDecimal
 
 class FormularioProdutoActivity : AppCompatActivity() {
@@ -16,25 +15,18 @@ class FormularioProdutoActivity : AppCompatActivity() {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
 
+    private var url: String? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraBotaoSalvar()
 
         binding.activityFormularioProdutoImagem.setOnClickListener {
-            val bindingFormularioImagem = FormularioImagemBinding.inflate(layoutInflater)
-            bindingFormularioImagem.formularioImagemBotaoCarregar.setOnClickListener {
-                val url = bindingFormularioImagem.formularioImagemUrl.text.toString()
-                bindingFormularioImagem.formularioImagemImageview.load(url)
+            FormularioImagemDialog(this).mostra { imagem ->
+                url = imagem
+                binding.activityFormularioProdutoImagem.tentaCarregarImagem(url)
             }
-            AlertDialog.Builder(this)
-                .setView(bindingFormularioImagem.root)
-                .setPositiveButton("Confirmar") { _, _ ->
-                    val url = bindingFormularioImagem.formularioImagemUrl.text.toString()
-                    binding.activityFormularioProdutoImagem.load(url)
-                }
-                .setNegativeButton("Cancelar") { _, _ -> }
-                .show()
         }
     }
 
@@ -60,6 +52,6 @@ class FormularioProdutoActivity : AppCompatActivity() {
         } else {
             BigDecimal(valorEmTexto)
         }
-        return Produto(nome = nome, descricao = descricao, valor = valor)
+        return Produto(nome = nome, descricao = descricao, valor = valor, imagem = url)
     }
 }
