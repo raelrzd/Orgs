@@ -11,7 +11,7 @@ import rezende.israel.orgs.extensions.tentaCarregarImagem
 import rezende.israel.orgs.model.Produto
 
 class ListaProdutosAdapter(
-    produtos: List<Produto>,
+    produtos: List<Produto> = emptyList(),
     private val context: Context,
     var quandoClicaNoItem: (produto: Produto) -> Unit = {}
 ) : RecyclerView.Adapter<ListaProdutosAdapter.ViewHolder>() {

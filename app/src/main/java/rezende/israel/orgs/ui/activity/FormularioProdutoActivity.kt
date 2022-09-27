@@ -2,7 +2,7 @@ package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import rezende.israel.orgs.dao.ProdutosDAO
+import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
 import rezende.israel.orgs.extensions.tentaCarregarImagem
 import rezende.israel.orgs.model.Produto
@@ -33,10 +33,11 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = binding.activityFormularioProdutoSalvar
-        val dao = ProdutosDAO()
+        val db = AppDataBase.instancia(this)
+        val produtoDao = db.produtoDao()
         botaoSalvar.setOnClickListener {
             val novoProduto = criaProduto()
-            dao.adiciona(novoProduto)
+            produtoDao.salva(novoProduto)
             finish()
         }
     }
