@@ -1,7 +1,9 @@
 package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
+import android.view.Menu
 import androidx.appcompat.app.AppCompatActivity
+import rezende.israel.orgs.R
 import rezende.israel.orgs.databinding.ActivityDetalhesProdutoBinding
 import rezende.israel.orgs.extensions.formataParaMoedaBr
 import rezende.israel.orgs.extensions.tentaCarregarImagem
@@ -17,6 +19,11 @@ class DetalhesProdutoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         tentaCarregarProduto()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_datalhes_produto, menu)
+        return super.onCreateOptionsMenu(menu)
     }
 
     private fun tentaCarregarProduto() {

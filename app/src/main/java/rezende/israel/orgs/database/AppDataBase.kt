@@ -9,7 +9,7 @@ import rezende.israel.orgs.database.converter.Converters
 import rezende.israel.orgs.database.dao.ProdutoDAO
 import rezende.israel.orgs.model.Produto
 
-@Database(entities = [Produto::class], version = 1 )
+@Database(entities = [Produto::class], version = 1, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
 
