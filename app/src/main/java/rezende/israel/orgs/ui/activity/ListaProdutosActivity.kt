@@ -5,9 +5,14 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.room.Room
 import rezende.israel.orgs.dao.ProdutosDAO
+import rezende.israel.orgs.database.AppDataBase
+import rezende.israel.orgs.database.dao.ProdutoDAO
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
+import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
+import java.math.BigDecimal
 
 class ListaProdutosActivity : AppCompatActivity() {
 
@@ -23,6 +28,11 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
+
+        val db = Room.databaseBuilder(this, AppDataBase::class.java, "orgs.db").allowMainThreadQueries().build()
+        val produtoDao = db.produtoDao()
+//        produtoDao.salva(Produto(nome = "Teste Nome 2", descricao = "Teste 2 desc", valor = BigDecimal(25.99)))
+        adapter.atualiza(produtoDao.buscaTodos())
     }
 
     private fun configuraFab() {
@@ -39,7 +49,7 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapter.atualiza(dao.buscaTodos())
+//        adapter.atualiza(dao.buscaTodos())
     }
 
     private fun configuraRecyclerView() {
