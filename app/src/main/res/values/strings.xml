@@ -16,4 +16,7 @@
     <string name="valor_desc">valor desc</string>
     <string name="valor_asc">valor asc</string>
     <string name="sem_ordena_o">sem ordenação</string>
+    <string name="ordenar">Ordenar</string>
+    <string name="url_da_imagem">URL da imagem</string>
+    <string name="carregar">Carregar</string>
 </resources>
