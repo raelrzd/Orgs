@@ -7,4 +7,13 @@
     <string name="descricao_hint">Descrição</string>
     <string name="valor_hint">Valor</string>
     <string name="salvar_button">SALVAR</string>
+    <string name="botao_menu_editar">Editar</string>
+    <string name="botao_menu_remover">Remover</string>
+    <string name="nome_desc">nome desc</string>
+    <string name="nome_asc">nome asc</string>
+    <string name="descri_o_desc">descrição desc</string>
+    <string name="descri_o_asc">descrição asc</string>
+    <string name="valor_desc">valor desc</string>
+    <string name="valor_asc">valor asc</string>
+    <string name="sem_ordena_o">sem ordenação</string>
 </resources>

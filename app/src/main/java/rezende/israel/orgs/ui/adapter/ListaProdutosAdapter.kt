@@ -44,7 +44,6 @@ class ListaProdutosAdapter(
             }
         }
 
-
         fun vincula(produto: Produto) {
             this.produto = produto
             val nome = binding.produtoItemNome
@@ -78,7 +77,6 @@ class ListaProdutosAdapter(
             }
             return true
         }
-
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {

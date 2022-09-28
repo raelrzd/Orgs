@@ -2,12 +2,15 @@ package rezende.israel.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
+import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 
 class ListaProdutosActivity : AppCompatActivity() {
@@ -27,6 +30,35 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_lista_produtos_ordenacao, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val produtosOrdenado: List<Produto>? = when (item.itemId) {
+            R.id.menu_ordenacao_item_nome_desc ->
+                produtoDao.ordenaPorNomeDesc()
+            R.id.menu_ordenacao_item_nome_asc ->
+                produtoDao.ordenaPorNomeAsc()
+            R.id.menu_ordenacao_item_desc_desc ->
+                produtoDao.ordenaPorDescricaoDesc()
+            R.id.menu_ordenacao_item_desc_asc ->
+                produtoDao.ordenaPorDescricaoAsc()
+            R.id.menu_ordenacao_item_valor_desc ->
+                produtoDao.ordenaPorValorDesc()
+            R.id.menu_ordenacao_item_valor_asc ->
+                produtoDao.ordenaPorValorAsc()
+            R.id.menu_ordenacao_item_sem_ordenacao ->
+                produtoDao.buscaTodos()
+            else -> null
+        }
+        produtosOrdenado?.let {
+            adapter.atualiza(it)
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun configuraFab() {
