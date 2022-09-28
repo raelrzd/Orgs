@@ -7,18 +7,15 @@ import rezende.israel.orgs.model.Produto
 interface ProdutoDAO {
 
     @Query("SELECT * FROM Produto")
-    fun buscaTodos() : List<Produto>
+    fun buscaTodos(): List<Produto>
 
-    @Insert
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun salva(vararg produto: Produto)
 
     @Delete
     fun remove(vararg produto: Produto)
 
-    @Update
-    fun altera(produto: Produto)
-
     @Query("SELECT * FROM Produto WHERE id = :id")
-    fun buscaPorId(id: Long) : Produto?
+    fun buscaPorId(id: Long): Produto?
 
 }

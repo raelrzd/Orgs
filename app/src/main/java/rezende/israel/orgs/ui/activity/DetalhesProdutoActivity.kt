@@ -15,15 +15,16 @@ import rezende.israel.orgs.model.Produto
 
 class DetalhesProdutoActivity : AppCompatActivity() {
 
-    private var idProduto: Long? = null
+    private var idProduto: Long = 0L
     private var produto: Produto? = null
+
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
     }
+
     private val produtoDao by lazy {
         AppDataBase.instancia(this).produtoDao()
     }
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +34,7 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        idProduto?.let { id ->
-            produto = produtoDao.buscaPorId(id)
-        }
+        produto = produtoDao.buscaPorId(idProduto)
         produto?.let {
             preencheCampos(it)
         } ?: finish()
@@ -49,15 +48,13 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_detalhes_item_editar -> {
-                Log.i("Menu", "onOptionsItemSelected: editar")
                 Intent(this, FormularioProdutoActivity::class.java).apply {
-                    putExtra(CHAVE_PRODUTO, produto)
+                    putExtra(CHAVE_PRODUTO_ID, idProduto)
                     startActivity(this)
                 }
             }
             R.id.menu_detalhes_item_remover -> {
                 produto?.let {
-                    Log.i("Menu", "onOptionsItemSelected: remover")
                     produtoDao.remove(it)
                     finish()
                 }
@@ -67,9 +64,7 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     }
 
     private fun tentaCarregarProduto() {
-        intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)?.let { produtoCarregado ->
-            idProduto = produtoCarregado.id
-        } ?: finish()
+        idProduto = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
     }
 
     private fun preencheCampos(produtoCarregado: Produto) {

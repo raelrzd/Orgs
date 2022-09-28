@@ -15,6 +15,11 @@ class FormularioProdutoActivity : AppCompatActivity() {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
     }
 
+    private val produtoDao by lazy {
+        val db = AppDataBase.instancia(this)
+        db.produtoDao()
+    }
+
     private var url: String? = null
     private var idProduto = 0L
 
@@ -30,29 +35,39 @@ class FormularioProdutoActivity : AppCompatActivity() {
                 binding.activityFormularioProdutoImagem.tentaCarregarImagem(url)
             }
         }
+        tentaCarregarProduto()
+    }
 
-        intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)?.let { produtoCarregado ->
+    private fun tentaCarregarProduto() {
+        idProduto = intent.getLongExtra(CHAVE_PRODUTO_ID, 0L)
+    }
+
+    private fun tentaBuscarProduto() {
+        produtoDao.buscaPorId(idProduto)?.let {
             title = "Alterar produto"
-            idProduto = produtoCarregado.id
-            url = produtoCarregado.imagem
-            binding.activityFormularioProdutoImagem.tentaCarregarImagem(produtoCarregado.imagem)
-            binding.activityFormularioProdutoNome.setText(produtoCarregado.nome)
-            binding.activityFormularioProdutoDescricao.setText(produtoCarregado.descricao)
-            binding.activityFormularioProdutoValor.setText(produtoCarregado.valor.toPlainString())
+            preencheCamos(it)
         }
+    }
+
+    private fun preencheCamos(produto: Produto) {
+        url = produto.imagem
+        binding.activityFormularioProdutoImagem.tentaCarregarImagem(produto.imagem)
+        binding.activityFormularioProdutoNome.setText(produto.nome)
+        binding.activityFormularioProdutoDescricao.setText(produto.descricao)
+        binding.activityFormularioProdutoValor.setText(produto.valor.toPlainString())
+    }
+
+    override fun onResume() {
+        super.onResume()
+        tentaBuscarProduto()
     }
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = binding.activityFormularioProdutoSalvar
-        val db = AppDataBase.instancia(this)
-        val produtoDao = db.produtoDao()
+
         botaoSalvar.setOnClickListener {
             val novoProduto = criaProduto()
-            if (idProduto > 0) {
-                produtoDao.altera(novoProduto)
-            } else {
-                produtoDao.salva(novoProduto)
-            }
+            produtoDao.salva(novoProduto)
             finish()
         }
     }

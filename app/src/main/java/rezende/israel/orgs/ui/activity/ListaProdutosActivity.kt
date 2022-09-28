@@ -23,7 +23,7 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Toast.makeText(this, "App em construção... " + ("\u26A0"), Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Seja Bem Vindo!! " + ("\uD83E\uDD19"), Toast.LENGTH_LONG).show()
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
@@ -53,21 +53,19 @@ class ListaProdutosActivity : AppCompatActivity() {
 
         adapter.quandoClicaNoItem = {
             Intent(this, DetalhesProdutoActivity::class.java).apply {
-                putExtra(CHAVE_PRODUTO, it)
+                putExtra(CHAVE_PRODUTO_ID, it.id)
                 startActivity(this)
             }
         }
 
         adapter.quandoClicaNoEditar = {
-            Log.i("Menu", "configuraRecyclerView: Editar $it")
             Intent(this, FormularioProdutoActivity::class.java).apply {
-                putExtra(CHAVE_PRODUTO, it)
+                putExtra(CHAVE_PRODUTO_ID, it.id)
                 startActivity(this)
             }
         }
 
         adapter.quandoClicaNoRemover = {
-            Log.i("Menu", "configuraRecyclerView: Remover $it")
             produtoDao.remove(it)
             adapter.atualiza(produtoDao.buscaTodos())
         }
