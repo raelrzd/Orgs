@@ -17,6 +17,10 @@ class ListaProdutosActivity : AppCompatActivity() {
         ActivityListaProdutosBinding.inflate(layoutInflater)
     }
 
+    private val produtoDao by lazy {
+        AppDataBase.instancia(this).produtoDao()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         Toast.makeText(this, "App em construção... " + ("\u26A0"), Toast.LENGTH_LONG).show()
@@ -39,8 +43,6 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val db = AppDataBase.instancia(this)
-        val produtoDao = db.produtoDao()
         adapter.atualiza(produtoDao.buscaTodos())
     }
 
@@ -50,19 +52,24 @@ class ListaProdutosActivity : AppCompatActivity() {
         recyclerView.layoutManager = LinearLayoutManager(this)
 
         adapter.quandoClicaNoItem = {
-            val intent = Intent(this, DetalhesProdutoActivity::class.java).apply {
+            Intent(this, DetalhesProdutoActivity::class.java).apply {
                 putExtra(CHAVE_PRODUTO, it)
+                startActivity(this)
             }
-            startActivity(intent)
         }
 
         adapter.quandoClicaNoEditar = {
             Log.i("Menu", "configuraRecyclerView: Editar $it")
+            Intent(this, FormularioProdutoActivity::class.java).apply {
+                putExtra(CHAVE_PRODUTO, it)
+                startActivity(this)
+            }
         }
 
         adapter.quandoClicaNoRemover = {
             Log.i("Menu", "configuraRecyclerView: Remover $it")
+            produtoDao.remove(it)
+            adapter.atualiza(produtoDao.buscaTodos())
         }
-
     }
 }
