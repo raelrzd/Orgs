@@ -1,7 +1,9 @@
 package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import rezende.israel.orgs.R
 import rezende.israel.orgs.databinding.ActivityDetalhesProdutoBinding
@@ -24,6 +26,18 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_datalhes_produto, menu)
         return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.menu_detalhes_item_editar -> {
+                Log.i("Menu", "onOptionsItemSelected: editar")
+            }
+            R.id.menu_detalhes_item_remover -> {
+                Log.i("Menu", "onOptionsItemSelected: remover")
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 
     private fun tentaCarregarProduto() {

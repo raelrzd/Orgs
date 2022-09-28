@@ -2,6 +2,7 @@ package rezende.israel.orgs.ui.activity
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -53,6 +54,14 @@ class ListaProdutosActivity : AppCompatActivity() {
                 putExtra(CHAVE_PRODUTO, it)
             }
             startActivity(intent)
+        }
+
+        adapter.quandoClicaNoEditar = {
+            Log.i("Menu", "configuraRecyclerView: Editar $it")
+        }
+
+        adapter.quandoClicaNoRemover = {
+            Log.i("Menu", "configuraRecyclerView: Remover $it")
         }
 
     }
