@@ -15,15 +15,30 @@ import rezende.israel.orgs.model.Produto
 
 class DetalhesProdutoActivity : AppCompatActivity() {
 
-    private lateinit var produto: Produto
+    private var idProduto: Long? = null
+    private var produto: Produto? = null
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
     }
+    private val produtoDao by lazy {
+        AppDataBase.instancia(this).produtoDao()
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         tentaCarregarProduto()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        idProduto?.let { id ->
+            produto = produtoDao.buscaPorId(id)
+        }
+        produto?.let {
+            preencheCampos(it)
+        } ?: finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -32,21 +47,18 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (::produto.isInitialized){
-            val db = AppDataBase.instancia(this)
-            val produtoDao = db.produtoDao()
-
-            when (item.itemId) {
-                R.id.menu_detalhes_item_editar -> {
-                    Log.i("Menu", "onOptionsItemSelected: editar")
-                    Intent(this, FormularioProdutoActivity::class.java).apply {
-                        putExtra(CHAVE_PRODUTO, produto)
-                        startActivity(this)
-                    }
+        when (item.itemId) {
+            R.id.menu_detalhes_item_editar -> {
+                Log.i("Menu", "onOptionsItemSelected: editar")
+                Intent(this, FormularioProdutoActivity::class.java).apply {
+                    putExtra(CHAVE_PRODUTO, produto)
+                    startActivity(this)
                 }
-                R.id.menu_detalhes_item_remover -> {
+            }
+            R.id.menu_detalhes_item_remover -> {
+                produto?.let {
                     Log.i("Menu", "onOptionsItemSelected: remover")
-                    produtoDao.remove(produto)
+                    produtoDao.remove(it)
                     finish()
                 }
             }
@@ -56,8 +68,7 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 
     private fun tentaCarregarProduto() {
         intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)?.let { produtoCarregado ->
-            produto = produtoCarregado
-            preencheCampos(produtoCarregado)
+            idProduto = produtoCarregado.id
         } ?: finish()
     }
 
