@@ -1,5 +1,6 @@
 package rezende.israel.orgs.ui.activity
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.Menu
@@ -38,6 +39,10 @@ class DetalhesProdutoActivity : AppCompatActivity() {
             when (item.itemId) {
                 R.id.menu_detalhes_item_editar -> {
                     Log.i("Menu", "onOptionsItemSelected: editar")
+                    Intent(this, FormularioProdutoActivity::class.java).apply {
+                        putExtra(CHAVE_PRODUTO, produto)
+                        startActivity(this)
+                    }
                 }
                 R.id.menu_detalhes_item_remover -> {
                     Log.i("Menu", "onOptionsItemSelected: remover")
