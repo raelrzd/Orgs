@@ -1,6 +1,7 @@
 package rezende.israel.orgs.database.dao
 
 import androidx.room.Dao
+import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.Query
 import rezende.israel.orgs.model.Produto
@@ -14,5 +15,7 @@ interface ProdutoDAO {
     @Insert
     fun salva(vararg produto: Produto)
 
+    @Delete
+    fun remove(vararg produto: Produto)
 
 }

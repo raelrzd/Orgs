@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import rezende.israel.orgs.R
+import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityDetalhesProdutoBinding
 import rezende.israel.orgs.extensions.formataParaMoedaBr
 import rezende.israel.orgs.extensions.tentaCarregarImagem
@@ -13,6 +14,7 @@ import rezende.israel.orgs.model.Produto
 
 class DetalhesProdutoActivity : AppCompatActivity() {
 
+    private lateinit var produto: Produto
     private val binding by lazy {
         ActivityDetalhesProdutoBinding.inflate(layoutInflater)
     }
@@ -29,12 +31,19 @@ class DetalhesProdutoActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.menu_detalhes_item_editar -> {
-                Log.i("Menu", "onOptionsItemSelected: editar")
-            }
-            R.id.menu_detalhes_item_remover -> {
-                Log.i("Menu", "onOptionsItemSelected: remover")
+        if (::produto.isInitialized){
+            val db = AppDataBase.instancia(this)
+            val produtoDao = db.produtoDao()
+
+            when (item.itemId) {
+                R.id.menu_detalhes_item_editar -> {
+                    Log.i("Menu", "onOptionsItemSelected: editar")
+                }
+                R.id.menu_detalhes_item_remover -> {
+                    Log.i("Menu", "onOptionsItemSelected: remover")
+                    produtoDao.remove(produto)
+                    finish()
+                }
             }
         }
         return super.onOptionsItemSelected(item)
@@ -42,6 +51,7 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 
     private fun tentaCarregarProduto() {
         intent.getParcelableExtra<Produto>(CHAVE_PRODUTO)?.let { produtoCarregado ->
+            produto = produtoCarregado
             preencheCampos(produtoCarregado)
         } ?: finish()
     }
