@@ -2,6 +2,12 @@ package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
 import rezende.israel.orgs.extensions.tentaCarregarImagem
@@ -19,6 +25,8 @@ class FormularioProdutoActivity : AppCompatActivity() {
         val db = AppDataBase.instancia(this)
         db.produtoDao()
     }
+
+    private val scope = CoroutineScope(IO)
 
     private var url: String? = null
     private var idProduto = 0L
@@ -43,9 +51,13 @@ class FormularioProdutoActivity : AppCompatActivity() {
     }
 
     private fun tentaBuscarProduto() {
-        produtoDao.buscaPorId(idProduto)?.let {
-            title = "Alterar produto"
-            preencheCamos(it)
+        scope.launch {
+            produtoDao.buscaPorId(idProduto)?.let {
+                withContext(Main){
+                    title = "Alterar produto"
+                    preencheCamos(it)
+                }
+            }
         }
     }
 
@@ -67,8 +79,10 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
         botaoSalvar.setOnClickListener {
             val novoProduto = criaProduto()
-            produtoDao.salva(novoProduto)
-            finish()
+            scope.launch {
+                produtoDao.salva(novoProduto)
+                finish()
+            }
         }
     }
 

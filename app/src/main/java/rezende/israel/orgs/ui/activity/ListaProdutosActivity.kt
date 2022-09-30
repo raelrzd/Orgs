@@ -7,6 +7,10 @@ import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
@@ -23,6 +27,7 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val produtoDao by lazy {
         AppDataBase.instancia(this).produtoDao()
     }
+    private val scope = MainScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,7 +80,12 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        adapter.atualiza(produtoDao.buscaTodos())
+        scope.launch {
+            val produtos = withContext(Dispatchers.IO) {
+                produtoDao.buscaTodos()
+            }
+            adapter.atualiza(produtos)
+        }
     }
 
     private fun configuraRecyclerView() {
@@ -98,8 +108,13 @@ class ListaProdutosActivity : AppCompatActivity() {
         }
 
         adapter.quandoClicaNoRemover = {
-            produtoDao.remove(it)
-            adapter.atualiza(produtoDao.buscaTodos())
+            scope.launch {
+                val produtos = withContext(Dispatchers.IO){
+                    produtoDao.remove(it)
+                    produtoDao.buscaTodos()
+                }
+                adapter.atualiza(produtos)
+            }
         }
     }
 }

@@ -5,6 +5,12 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.Dispatchers.Main
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityDetalhesProdutoBinding
@@ -25,6 +31,8 @@ class DetalhesProdutoActivity : AppCompatActivity() {
         AppDataBase.instancia(this).produtoDao()
     }
 
+    private val scope = CoroutineScope(IO)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -33,10 +41,18 @@ class DetalhesProdutoActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        produto = produtoDao.buscaPorId(idProduto)
-        produto?.let {
-            preencheCampos(it)
-        } ?: finish()
+        buscaProduto()
+    }
+
+    private fun buscaProduto() {
+        scope.launch {
+            produto = produtoDao.buscaPorId(idProduto)
+            withContext(Main) {
+                produto?.let {
+                    preencheCampos(it)
+                } ?: finish()
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -53,9 +69,11 @@ class DetalhesProdutoActivity : AppCompatActivity() {
                 }
             }
             R.id.menu_detalhes_item_remover -> {
-                produto?.let {
-                    produtoDao.remove(it)
-                    finish()
+                scope.launch {
+                    produto?.let {
+                        produtoDao.remove(it)
+                        finish()
+                    }
                 }
             }
         }
