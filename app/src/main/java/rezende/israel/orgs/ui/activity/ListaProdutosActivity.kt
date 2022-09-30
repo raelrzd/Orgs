@@ -43,25 +43,30 @@ class ListaProdutosActivity : AppCompatActivity() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val produtosOrdenado: List<Produto>? = when (item.itemId) {
-            R.id.menu_ordenacao_item_nome_desc ->
-                produtoDao.ordenaPorNomeDesc()
-            R.id.menu_ordenacao_item_nome_asc ->
-                produtoDao.ordenaPorNomeAsc()
-            R.id.menu_ordenacao_item_desc_desc ->
-                produtoDao.ordenaPorDescricaoDesc()
-            R.id.menu_ordenacao_item_desc_asc ->
-                produtoDao.ordenaPorDescricaoAsc()
-            R.id.menu_ordenacao_item_valor_desc ->
-                produtoDao.ordenaPorValorDesc()
-            R.id.menu_ordenacao_item_valor_asc ->
-                produtoDao.ordenaPorValorAsc()
-            R.id.menu_ordenacao_item_sem_ordenacao ->
-                produtoDao.buscaTodos()
-            else -> null
-        }
-        produtosOrdenado?.let {
-            adapter.atualiza(it)
+        var produtosOrdenado: List<Produto>?
+        scope.launch {
+            withContext(Dispatchers.IO) {
+                produtosOrdenado = when (item.itemId) {
+                    R.id.menu_ordenacao_item_nome_desc ->
+                        produtoDao.ordenaPorNomeDesc()
+                    R.id.menu_ordenacao_item_nome_asc ->
+                        produtoDao.ordenaPorNomeAsc()
+                    R.id.menu_ordenacao_item_desc_desc ->
+                        produtoDao.ordenaPorDescricaoDesc()
+                    R.id.menu_ordenacao_item_desc_asc ->
+                        produtoDao.ordenaPorDescricaoAsc()
+                    R.id.menu_ordenacao_item_valor_desc ->
+                        produtoDao.ordenaPorValorDesc()
+                    R.id.menu_ordenacao_item_valor_asc ->
+                        produtoDao.ordenaPorValorAsc()
+                    R.id.menu_ordenacao_item_sem_ordenacao ->
+                        produtoDao.buscaTodos()
+                    else -> null
+                }
+            }
+            produtosOrdenado?.let {
+                adapter.atualiza(it)
+            }
         }
         return super.onOptionsItemSelected(item)
     }
@@ -109,7 +114,7 @@ class ListaProdutosActivity : AppCompatActivity() {
 
         adapter.quandoClicaNoRemover = {
             scope.launch {
-                val produtos = withContext(Dispatchers.IO){
+                val produtos = withContext(Dispatchers.IO) {
                     produtoDao.remove(it)
                     produtoDao.buscaTodos()
                 }
