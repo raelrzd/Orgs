@@ -31,19 +31,17 @@ class DetalhesProdutoActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         tentaCarregarProduto()
-    }
-
-    override fun onResume() {
-        super.onResume()
         buscaProduto()
     }
 
     private fun buscaProduto() {
         lifecycleScope.launch {
-            produto = produtoDao.buscaPorId(idProduto)
-            produto?.let {
-                preencheCampos(it)
-            } ?: finish()
+            produtoDao.buscaPorId(idProduto).collect { produtoEncontrado ->
+                produto = produtoEncontrado
+                produto?.let {
+                    preencheCampos(it)
+                } ?: finish()
+            }
         }
     }
 

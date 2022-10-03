@@ -1,6 +1,7 @@
 package rezende.israel.orgs.database.dao
 
 import androidx.room.*
+import kotlinx.coroutines.flow.Flow
 import rezende.israel.orgs.model.Produto
 
 @Dao
@@ -9,6 +10,9 @@ interface ProdutoDAO {
     @Query("SELECT * FROM Produto")
     suspend fun buscaTodos(): List<Produto>
 
+    @Query("SELECT * FROM Produto")
+    fun buscaTodosComFlow(): Flow<List<Produto>>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun salva(vararg produto: Produto)
 
@@ -16,7 +20,7 @@ interface ProdutoDAO {
     suspend fun remove(vararg produto: Produto)
 
     @Query("SELECT * FROM Produto WHERE id = :id")
-    suspend fun buscaPorId(id: Long): Produto?
+    fun buscaPorId(id: Long): Flow<Produto?>
 
     @Query("SELECT * FROM Produto ORDER BY nome DESC")
     suspend fun ordenaPorNomeDesc(): List<Produto>

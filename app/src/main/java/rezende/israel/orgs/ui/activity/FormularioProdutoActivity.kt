@@ -38,6 +38,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
             }
         }
         tentaCarregarProduto()
+        tentaBuscarProduto()
     }
 
     private fun tentaCarregarProduto() {
@@ -46,12 +47,15 @@ class FormularioProdutoActivity : AppCompatActivity() {
 
     private fun tentaBuscarProduto() {
         lifecycleScope.launch {
-            produtoDao.buscaPorId(idProduto)?.let {
-                title = "Alterar produto"
-                preencheCamos(it)
+            produtoDao.buscaPorId(idProduto).collect {
+                it?.let {
+                    title = "Alterar produto"
+                    preencheCamos(it)
+                }
             }
         }
     }
+
 
     private fun preencheCamos(produto: Produto) {
         url = produto.imagem
@@ -59,11 +63,6 @@ class FormularioProdutoActivity : AppCompatActivity() {
         binding.activityFormularioProdutoNome.setText(produto.nome)
         binding.activityFormularioProdutoDescricao.setText(produto.descricao)
         binding.activityFormularioProdutoValor.setText(produto.valor.toPlainString())
-    }
-
-    override fun onResume() {
-        super.onResume()
-        tentaBuscarProduto()
     }
 
     private fun configuraBotaoSalvar() {

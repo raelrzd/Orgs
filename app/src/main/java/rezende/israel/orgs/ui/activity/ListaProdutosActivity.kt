@@ -33,6 +33,12 @@ class ListaProdutosActivity : AppCompatActivity() {
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
+
+        lifecycleScope.launch {
+            produtoDao.buscaTodosComFlow().collect {
+                adapter.atualiza(it)
+            }
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -79,15 +85,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
-    override fun onResume() {
-        super.onResume()
-        lifecycleScope.launch {
-            val produtos = produtoDao.buscaTodos()
-            adapter.atualiza(produtos)
-        }
-    }
-
-
     private fun configuraRecyclerView() {
         val recyclerView = binding.activityListaProdutosRecyclerview
         recyclerView.adapter = adapter
@@ -110,8 +107,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         adapter.quandoClicaNoRemover = {
             lifecycleScope.launch {
                 produtoDao.remove(it)
-                val produtos = produtoDao.buscaTodos()
-                adapter.atualiza(produtos)
             }
         }
     }
