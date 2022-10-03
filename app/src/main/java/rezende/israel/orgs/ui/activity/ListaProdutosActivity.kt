@@ -6,11 +6,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
@@ -20,6 +18,7 @@ import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 class ListaProdutosActivity : AppCompatActivity() {
 
     private val adapter = ListaProdutosAdapter(context = this)
+
     private val binding by lazy {
         ActivityListaProdutosBinding.inflate(layoutInflater)
     }
@@ -27,7 +26,6 @@ class ListaProdutosActivity : AppCompatActivity() {
     private val produtoDao by lazy {
         AppDataBase.instancia(this).produtoDao()
     }
-    private val scope = MainScope()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,25 +42,23 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         var produtosOrdenado: List<Produto>?
-        scope.launch {
-            withContext(Dispatchers.IO) {
-                produtosOrdenado = when (item.itemId) {
-                    R.id.menu_ordenacao_item_nome_desc ->
-                        produtoDao.ordenaPorNomeDesc()
-                    R.id.menu_ordenacao_item_nome_asc ->
-                        produtoDao.ordenaPorNomeAsc()
-                    R.id.menu_ordenacao_item_desc_desc ->
-                        produtoDao.ordenaPorDescricaoDesc()
-                    R.id.menu_ordenacao_item_desc_asc ->
-                        produtoDao.ordenaPorDescricaoAsc()
-                    R.id.menu_ordenacao_item_valor_desc ->
-                        produtoDao.ordenaPorValorDesc()
-                    R.id.menu_ordenacao_item_valor_asc ->
-                        produtoDao.ordenaPorValorAsc()
-                    R.id.menu_ordenacao_item_sem_ordenacao ->
-                        produtoDao.buscaTodos()
-                    else -> null
-                }
+        lifecycleScope.launch {
+            produtosOrdenado = when (item.itemId) {
+                R.id.menu_ordenacao_item_nome_desc ->
+                    produtoDao.ordenaPorNomeDesc()
+                R.id.menu_ordenacao_item_nome_asc ->
+                    produtoDao.ordenaPorNomeAsc()
+                R.id.menu_ordenacao_item_desc_desc ->
+                    produtoDao.ordenaPorDescricaoDesc()
+                R.id.menu_ordenacao_item_desc_asc ->
+                    produtoDao.ordenaPorDescricaoAsc()
+                R.id.menu_ordenacao_item_valor_desc ->
+                    produtoDao.ordenaPorValorDesc()
+                R.id.menu_ordenacao_item_valor_asc ->
+                    produtoDao.ordenaPorValorAsc()
+                R.id.menu_ordenacao_item_sem_ordenacao ->
+                    produtoDao.buscaTodos()
+                else -> null
             }
             produtosOrdenado?.let {
                 adapter.atualiza(it)
@@ -85,13 +81,12 @@ class ListaProdutosActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        scope.launch {
-            val produtos = withContext(Dispatchers.IO) {
-                produtoDao.buscaTodos()
-            }
+        lifecycleScope.launch {
+            val produtos = produtoDao.buscaTodos()
             adapter.atualiza(produtos)
         }
     }
+
 
     private fun configuraRecyclerView() {
         val recyclerView = binding.activityListaProdutosRecyclerview
@@ -113,11 +108,9 @@ class ListaProdutosActivity : AppCompatActivity() {
         }
 
         adapter.quandoClicaNoRemover = {
-            scope.launch {
-                val produtos = withContext(Dispatchers.IO) {
-                    produtoDao.remove(it)
-                    produtoDao.buscaTodos()
-                }
+            lifecycleScope.launch {
+                produtoDao.remove(it)
+                val produtos = produtoDao.buscaTodos()
                 adapter.atualiza(produtos)
             }
         }

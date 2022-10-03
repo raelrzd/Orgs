@@ -7,34 +7,34 @@ import rezende.israel.orgs.model.Produto
 interface ProdutoDAO {
 
     @Query("SELECT * FROM Produto")
-    fun buscaTodos(): List<Produto>
+    suspend fun buscaTodos(): List<Produto>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun salva(vararg produto: Produto)
+    suspend fun salva(vararg produto: Produto)
 
     @Delete
-    fun remove(vararg produto: Produto)
+    suspend fun remove(vararg produto: Produto)
 
     @Query("SELECT * FROM Produto WHERE id = :id")
-    fun buscaPorId(id: Long): Produto?
+    suspend fun buscaPorId(id: Long): Produto?
 
     @Query("SELECT * FROM Produto ORDER BY nome DESC")
-    fun ordenaPorNomeDesc(): List<Produto>
+    suspend fun ordenaPorNomeDesc(): List<Produto>
 
     @Query("SELECT * FROM Produto ORDER BY nome ASC")
-    fun ordenaPorNomeAsc(): List<Produto>
+    suspend fun ordenaPorNomeAsc(): List<Produto>
 
     @Query("SELECT * FROM Produto ORDER BY descricao DESC")
-    fun ordenaPorDescricaoDesc(): List<Produto>
+    suspend fun ordenaPorDescricaoDesc(): List<Produto>
 
     @Query("SELECT * FROM Produto ORDER BY descricao ASC")
-    fun ordenaPorDescricaoAsc(): List<Produto>
+    suspend fun ordenaPorDescricaoAsc(): List<Produto>
 
     @Query("SELECT * FROM Produto ORDER BY valor DESC")
-    fun ordenaPorValorDesc(): List<Produto>
+    suspend fun ordenaPorValorDesc(): List<Produto>
 
     @Query("SELECT * FROM Produto ORDER BY valor ASC")
-    fun ordenaPorValorAsc(): List<Produto>
+    suspend fun ordenaPorValorAsc(): List<Produto>
 
 
 }
