@@ -8,6 +8,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
@@ -27,16 +28,26 @@ class ListaProdutosActivity : AppCompatActivity() {
         AppDataBase.instancia(this).produtoDao()
     }
 
+    private val usuarioDao by lazy {
+        AppDataBase.instancia(this).usuarioDao()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        Toast.makeText(this, "Seja Bem Vindo!! " + ("\uD83E\uDD19"), Toast.LENGTH_LONG).show()
         setContentView(binding.root)
         configuraFab()
         configuraRecyclerView()
 
         lifecycleScope.launch {
-            produtoDao.buscaTodosComFlow().collect {
-                adapter.atualiza(it)
+            launch {
+                produtoDao.buscaTodosComFlow().collect { produtos ->
+                    adapter.atualiza(produtos)
+                }
+            }
+            intent.getStringExtra("CHAVE_USUARIO_ID")?.let { usuarioId ->
+                usuarioDao.buscaPorId(usuarioId).collect{
+                    Toast.makeText(this@ListaProdutosActivity, "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"), Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
