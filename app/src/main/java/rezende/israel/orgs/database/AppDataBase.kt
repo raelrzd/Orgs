@@ -11,7 +11,7 @@ import rezende.israel.orgs.database.dao.UsuarioDAO
 import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.model.Usuario
 
-@Database(entities = [Produto::class, Usuario::class], version = 1, exportSchema = false)
+@Database(entities = [Produto::class, Usuario::class], version = 2, exportSchema = false)
 @TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
 
@@ -25,7 +25,8 @@ abstract class AppDataBase : RoomDatabase() {
                 context,
                 AppDataBase::class.java,
                 "orgs.db"
-            ).build().also {
+            ).fallbackToDestructiveMigration()
+                .build().also {
                 db = it
             }
         }
