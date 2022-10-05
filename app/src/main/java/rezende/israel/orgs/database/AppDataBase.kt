@@ -8,10 +8,11 @@ import androidx.room.TypeConverters
 import rezende.israel.orgs.database.converter.Converters
 import rezende.israel.orgs.database.dao.ProdutoDAO
 import rezende.israel.orgs.database.dao.UsuarioDAO
+import rezende.israel.orgs.database.migration.MIGRATION_1_2
 import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.model.Usuario
 
-@Database(entities = [Produto::class, Usuario::class], version = 2, exportSchema = false)
+@Database(entities = [Produto::class, Usuario::class], version = 2, exportSchema = true)
 @TypeConverters(Converters::class)
 abstract class AppDataBase : RoomDatabase() {
 
@@ -25,8 +26,7 @@ abstract class AppDataBase : RoomDatabase() {
                 context,
                 AppDataBase::class.java,
                 "orgs.db"
-            ).fallbackToDestructiveMigration()
-                .build().also {
+            ).addMigrations(MIGRATION_1_2).build().also {
                 db = it
             }
         }
