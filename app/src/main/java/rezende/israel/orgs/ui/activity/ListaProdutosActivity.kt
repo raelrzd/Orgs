@@ -14,6 +14,8 @@ import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
 import rezende.israel.orgs.model.Produto
+import rezende.israel.orgs.preferences.dataStore
+import rezende.israel.orgs.preferences.usuarioLogadoPreferences
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 
 class ListaProdutosActivity : AppCompatActivity() {
@@ -44,9 +46,16 @@ class ListaProdutosActivity : AppCompatActivity() {
                     adapter.atualiza(produtos)
                 }
             }
-            intent.getStringExtra("CHAVE_USUARIO_ID")?.let { usuarioId ->
-                usuarioDao.buscaPorId(usuarioId).collect{
-                    Toast.makeText(this@ListaProdutosActivity, "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"), Toast.LENGTH_SHORT).show()
+
+            dataStore.data.collect { preferences ->
+                preferences[usuarioLogadoPreferences]?.let { usuarioId ->
+                    usuarioDao.buscaPorId(usuarioId).collect {
+                        Toast.makeText(
+                            this@ListaProdutosActivity,
+                            "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
+                            Toast.LENGTH_LONG
+                        ).show()
+                    }
                 }
             }
         }
