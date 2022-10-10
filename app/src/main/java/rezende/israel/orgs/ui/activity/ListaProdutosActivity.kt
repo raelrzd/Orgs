@@ -6,6 +6,7 @@ import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.coroutines.flow.collect
@@ -13,6 +14,7 @@ import kotlinx.coroutines.launch
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
+import rezende.israel.orgs.extensions.vaiPara
 import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.preferences.dataStore
 import rezende.israel.orgs.preferences.usuarioLogadoPreferences
@@ -47,22 +49,32 @@ class ListaProdutosActivity : AppCompatActivity() {
                 }
             }
 
-            dataStore.data.collect { preferences ->
-                preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                    usuarioDao.buscaPorId(usuarioId).collect {
-                        Toast.makeText(
-                            this@ListaProdutosActivity,
-                            "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
+            launch {
+                dataStore.data.collect { preferences ->
+                    preferences[usuarioLogadoPreferences]?.let { usuarioId ->
+                        launch {
+                            usuarioDao.buscaPorId(usuarioId).collect {
+                                Toast.makeText(
+                                    this@ListaProdutosActivity,
+                                    "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    } ?: vaiParaLogin()
                 }
             }
         }
     }
 
+    private fun vaiParaLogin() {
+        vaiPara(LoginActivity::class.java)
+        finish()
+    }
+
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_lista_produtos_ordenacao, menu)
+        menuInflater.inflate(R.menu.menu_sair_lista_produtos, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -88,6 +100,12 @@ class ListaProdutosActivity : AppCompatActivity() {
             }
             produtosOrdenado?.let {
                 adapter.atualiza(it)
+            }
+            when (item.itemId) {
+                R.id.menu_sair_lista_produtos ->
+                    dataStore.edit { preferences ->
+                        preferences.remove(usuarioLogadoPreferences)
+                    }
             }
         }
         return super.onOptionsItemSelected(item)
