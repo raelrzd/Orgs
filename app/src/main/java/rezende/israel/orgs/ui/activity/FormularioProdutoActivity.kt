@@ -2,19 +2,17 @@ package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
 import rezende.israel.orgs.extensions.tentaCarregarImagem
 import rezende.israel.orgs.model.Produto
-import rezende.israel.orgs.preferences.dataStore
-import rezende.israel.orgs.preferences.usuarioLogadoPreferences
 import rezende.israel.orgs.ui.dialog.FormularioImagemDialog
 import java.math.BigDecimal
 
-class FormularioProdutoActivity : AppCompatActivity() {
+class FormularioProdutoActivity : UsuarioBaseActivity() {
 
     private val binding by lazy {
         ActivityFormularioProdutoBinding.inflate(layoutInflater)
@@ -47,16 +45,12 @@ class FormularioProdutoActivity : AppCompatActivity() {
         tentaBuscarProduto()
 
         lifecycleScope.launch {
-            dataStore.data.collect { preferences ->
-                preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                    usuarioDao.buscaPorId(usuarioId).collect {
-                        Toast.makeText(
-                            this@FormularioProdutoActivity,
-                            "Bem vindo ao Form de Produtos ${it.nome}!" + ("\uD83E\uDD19"),
-                            Toast.LENGTH_LONG
-                        ).show()
-                    }
-                }
+            usuario.filterNotNull().collect {
+                Toast.makeText(
+                    this@FormularioProdutoActivity,
+                    "Bem vindo ao Form de Produtos ${it.nome}!" + ("\uD83E\uDD19"),
+                    Toast.LENGTH_LONG
+                ).show()
             }
         }
     }

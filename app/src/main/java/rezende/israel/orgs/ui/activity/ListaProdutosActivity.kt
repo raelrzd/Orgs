@@ -5,22 +5,17 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
-import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
-import rezende.israel.orgs.extensions.vaiPara
 import rezende.israel.orgs.model.Produto
-import rezende.israel.orgs.preferences.dataStore
-import rezende.israel.orgs.preferences.usuarioLogadoPreferences
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 
-class ListaProdutosActivity : AppCompatActivity() {
+class ListaProdutosActivity : UsuarioBaseActivity() {
 
     private val adapter = ListaProdutosAdapter(context = this)
 
@@ -32,10 +27,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         AppDataBase.instancia(this).produtoDao()
     }
 
-    private val usuarioDao by lazy {
-        AppDataBase.instancia(this).usuarioDao()
-    }
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -44,29 +35,13 @@ class ListaProdutosActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             launch {
-                verificaUsuarioLogado()
-            }
-        }
-    }
-
-    private suspend fun verificaUsuarioLogado() {
-        dataStore.data.collect { preferences ->
-            preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                buscaUsuario(usuarioId)
-            } ?: vaiParaLogin()
-        }
-    }
-
-    private fun buscaUsuario(usuarioId: String) {
-        lifecycleScope.launch {
-            usuarioDao.buscaPorId(usuarioId).firstOrNull()?.let {
-                launch {
-                    buscaProdutosUsuario()
+                usuario.filterNotNull().collect {
                     Toast.makeText(
                         this@ListaProdutosActivity,
                         "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
                         Toast.LENGTH_LONG
                     ).show()
+                    buscaProdutosUsuario()
                 }
             }
         }
@@ -76,11 +51,6 @@ class ListaProdutosActivity : AppCompatActivity() {
         produtoDao.buscaTodosComFlow().collect { produtos ->
             adapter.atualiza(produtos)
         }
-    }
-
-    private fun vaiParaLogin() {
-        vaiPara(LoginActivity::class.java)
-        finish()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -118,12 +88,6 @@ class ListaProdutosActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
-    }
-
-    private suspend fun deslogaUsuario() {
-        dataStore.edit { preferences ->
-            preferences.remove(usuarioLogadoPreferences)
-        }
     }
 
     private fun configuraFab() {
