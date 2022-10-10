@@ -16,6 +16,7 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
         ActivityFormularioCadastroUsuarioBinding.inflate(layoutInflater)
     }
 
+
     private val dao by lazy {
         AppDataBase.instancia(this).usuarioDao()
     }
@@ -24,6 +25,8 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraBotaoCadastrar()
+
+
     }
 
     private fun configuraBotaoCadastrar() {
