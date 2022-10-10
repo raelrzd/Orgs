@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityListaProdutosBinding
+import rezende.israel.orgs.extensions.vaiPara
 import rezende.israel.orgs.model.Produto
 import rezende.israel.orgs.ui.adapter.ListaProdutosAdapter
 
@@ -55,7 +56,7 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_lista_produtos_ordenacao, menu)
-        menuInflater.inflate(R.menu.menu_sair_lista_produtos, menu)
+        menuInflater.inflate(R.menu.menu_perfil_lista_produtos, menu)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -83,8 +84,8 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
                 adapter.atualiza(it)
             }
             when (item.itemId) {
-                R.id.menu_sair_lista_produtos ->
-                    deslogaUsuario()
+                R.id.menu_perfil_lista_produtos ->
+                    vaiPara(PerfilUsuarioActivity::class.java)
             }
         }
         return super.onOptionsItemSelected(item)
