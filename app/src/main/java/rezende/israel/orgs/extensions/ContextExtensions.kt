@@ -12,7 +12,6 @@ fun Context.vaiPara(clazz: Class<*>, intent: Intent.() -> Unit = {}) {
         }
 }
 
-
 fun Context.toast(mensagem: String){
     Toast.makeText(this, mensagem, Toast.LENGTH_LONG)
         .show()
