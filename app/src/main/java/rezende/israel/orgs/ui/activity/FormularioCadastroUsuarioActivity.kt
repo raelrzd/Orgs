@@ -3,11 +3,11 @@ package rezende.israel.orgs.ui.activity
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityFormularioCadastroUsuarioBinding
+import rezende.israel.orgs.extensions.toast
 import rezende.israel.orgs.model.Usuario
 
 class FormularioCadastroUsuarioActivity : AppCompatActivity() {
@@ -25,21 +25,23 @@ class FormularioCadastroUsuarioActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
         configuraBotaoCadastrar()
-
-
     }
 
     private fun configuraBotaoCadastrar() {
         binding.activityFormularioCadastroBotaoCadastrar.setOnClickListener {
             val novoUsuario = criaUsuario()
-            lifecycleScope.launch {
-                try {
-                    dao.salva(novoUsuario)
-                    finish()
-                } catch (e: java.lang.Exception){
-                    Log.e("CadastroUsuario", "configuraBotaoCadastrar: ", e)
-                    Toast.makeText(this@FormularioCadastroUsuarioActivity, "Falha ao cadastrar usuário", Toast.LENGTH_SHORT).show()
-                }
+            cadastra(novoUsuario)
+        }
+    }
+
+    private fun cadastra(usuario: Usuario) {
+        lifecycleScope.launch {
+            try {
+                dao.salva(usuario)
+                finish()
+            } catch (e: Exception) {
+                Log.e("CadastroUsuario", "configuraBotaoCadastrar: ", e)
+                toast("Falha ao Cadastrar Usuário!!")
             }
         }
     }

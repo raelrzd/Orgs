@@ -9,7 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.datastore.preferences.core.edit
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
-import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.R
 import rezende.israel.orgs.database.AppDataBase
@@ -44,26 +44,37 @@ class ListaProdutosActivity : AppCompatActivity() {
 
         lifecycleScope.launch {
             launch {
-                produtoDao.buscaTodosComFlow().collect { produtos ->
-                    adapter.atualiza(produtos)
-                }
+                verificaUsuarioLogado()
             }
+        }
+    }
 
-            launch {
-                dataStore.data.collect { preferences ->
-                    preferences[usuarioLogadoPreferences]?.let { usuarioId ->
-                        launch {
-                            usuarioDao.buscaPorId(usuarioId).collect {
-                                Toast.makeText(
-                                    this@ListaProdutosActivity,
-                                    "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
-                                    Toast.LENGTH_LONG
-                                ).show()
-                            }
-                        }
-                    } ?: vaiParaLogin()
+    private suspend fun verificaUsuarioLogado() {
+        dataStore.data.collect { preferences ->
+            preferences[usuarioLogadoPreferences]?.let { usuarioId ->
+                buscaUsuario(usuarioId)
+            } ?: vaiParaLogin()
+        }
+    }
+
+    private fun buscaUsuario(usuarioId: String) {
+        lifecycleScope.launch {
+            usuarioDao.buscaPorId(usuarioId).firstOrNull()?.let {
+                launch {
+                    buscaProdutosUsuario()
+                    Toast.makeText(
+                        this@ListaProdutosActivity,
+                        "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
+                        Toast.LENGTH_LONG
+                    ).show()
                 }
             }
+        }
+    }
+
+    private suspend fun buscaProdutosUsuario() {
+        produtoDao.buscaTodosComFlow().collect { produtos ->
+            adapter.atualiza(produtos)
         }
     }
 
@@ -103,12 +114,16 @@ class ListaProdutosActivity : AppCompatActivity() {
             }
             when (item.itemId) {
                 R.id.menu_sair_lista_produtos ->
-                    dataStore.edit { preferences ->
-                        preferences.remove(usuarioLogadoPreferences)
-                    }
+                    deslogaUsuario()
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+
+    private suspend fun deslogaUsuario() {
+        dataStore.edit { preferences ->
+            preferences.remove(usuarioLogadoPreferences)
+        }
     }
 
     private fun configuraFab() {

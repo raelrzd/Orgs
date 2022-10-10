@@ -52,7 +52,7 @@ class FormularioProdutoActivity : AppCompatActivity() {
                     usuarioDao.buscaPorId(usuarioId).collect {
                         Toast.makeText(
                             this@FormularioProdutoActivity,
-                            "Bem vindo ao Form de cadastro ${it.nome}!" + ("\uD83E\uDD19"),
+                            "Bem vindo ao Form de Produtos ${it.nome}!" + ("\uD83E\uDD19"),
                             Toast.LENGTH_LONG
                         ).show()
                     }

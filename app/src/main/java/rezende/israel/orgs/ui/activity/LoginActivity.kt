@@ -10,6 +10,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityLoginBinding
+import rezende.israel.orgs.extensions.toast
 import rezende.israel.orgs.extensions.vaiPara
 import rezende.israel.orgs.preferences.dataStore
 import rezende.israel.orgs.preferences.usuarioLogadoPreferences
@@ -36,16 +37,19 @@ class LoginActivity : AppCompatActivity() {
         binding.activityLoginBotaoEntrar.setOnClickListener {
             val usuario = binding.activityLoginUsuario.text.toString()
             val senha = binding.activityLoginSenha.text.toString()
-            lifecycleScope.launch {
-                usuarioDao.autentica(usuario, senha)?.let { usuario ->
-                    Log.i("LoginActivity", "onCreate: $usuario - $senha")
-                    dataStore.edit { preferences ->
-                        preferences[usuarioLogadoPreferences] = usuario.id
-                    }
-                    vaiPara(ListaProdutosActivity::class.java)
-                    finish()
-                } ?: Toast.makeText(this@LoginActivity, "Falha na autenticação", Toast.LENGTH_LONG).show()
-            }
+            autentica(usuario, senha)
+        }
+    }
+
+    private fun autentica(usuario: String, senha: String) {
+        lifecycleScope.launch {
+            usuarioDao.autentica(usuario, senha)?.let { usuario ->
+                dataStore.edit { preferences ->
+                    preferences[usuarioLogadoPreferences] = usuario.id
+                }
+                vaiPara(ListaProdutosActivity::class.java)
+                finish()
+            } ?: toast("Falha na autenticação do Usuário!!")
         }
     }
 
@@ -54,5 +58,4 @@ class LoginActivity : AppCompatActivity() {
             vaiPara(FormularioCadastroUsuarioActivity::class.java)
         }
     }
-
 }
