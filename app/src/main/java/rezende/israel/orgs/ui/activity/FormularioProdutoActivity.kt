@@ -1,9 +1,7 @@
 package rezende.israel.orgs.ui.activity
 
 import android.os.Bundle
-import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch
 import rezende.israel.orgs.database.AppDataBase
 import rezende.israel.orgs.databinding.ActivityFormularioProdutoBinding
@@ -20,10 +18,6 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
 
     private val produtoDao by lazy {
         AppDataBase.instancia(this).produtoDao()
-    }
-
-    private val usuarioDao by lazy {
-        AppDataBase.instancia(this).usuarioDao()
     }
 
     private var url: String? = null
@@ -43,16 +37,6 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
         }
         tentaCarregarProduto()
         tentaBuscarProduto()
-
-        lifecycleScope.launch {
-            usuario.filterNotNull().collect {
-                Toast.makeText(
-                    this@FormularioProdutoActivity,
-                    "Bem vindo ao Form de Produtos ${it.nome}!" + ("\uD83E\uDD19"),
-                    Toast.LENGTH_LONG
-                ).show()
-            }
-        }
     }
 
     private fun tentaCarregarProduto() {
@@ -70,7 +54,6 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
         }
     }
 
-
     private fun preencheCamos(produto: Produto) {
         url = produto.imagem
         binding.activityFormularioProdutoImagem.tentaCarregarImagem(produto.imagem)
@@ -81,17 +64,18 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
 
     private fun configuraBotaoSalvar() {
         val botaoSalvar = binding.activityFormularioProdutoSalvar
-
         botaoSalvar.setOnClickListener {
-            val novoProduto = criaProduto()
-            lifecycleScope.launch {
-                produtoDao.salva(novoProduto)
-                finish()
+            usuario.value?.let {
+                val novoProduto = criaProduto(it.id)
+                lifecycleScope.launch {
+                    produtoDao.salva(novoProduto)
+                    finish()
+                }
             }
         }
     }
 
-    private fun criaProduto(): Produto {
+    private fun criaProduto(usuarioId: String): Produto {
         val campoNome = binding.activityFormularioProdutoNome
         val nome = campoNome.text.toString()
         val campoDescricao = binding.activityFormularioProdutoDescricao
@@ -108,7 +92,8 @@ class FormularioProdutoActivity : UsuarioBaseActivity() {
             nome = nome,
             descricao = descricao,
             valor = valor,
-            imagem = url
+            imagem = url,
+            usuarioId = usuarioId
         )
     }
 }
