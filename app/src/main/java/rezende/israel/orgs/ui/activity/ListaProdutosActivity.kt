@@ -28,6 +28,8 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         AppDataBase.instancia(this).produtoDao()
     }
 
+    private lateinit var idUsuarioLogado: String
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(binding.root)
@@ -36,20 +38,22 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
 
         lifecycleScope.launch {
             launch {
-                usuario.filterNotNull().collect {
+                usuario.filterNotNull().collect { usuario ->
+                    idUsuarioLogado = usuario.id
                     Toast.makeText(
                         this@ListaProdutosActivity,
-                        "Bem vindo de volta ${it.nome}!" + ("\uD83E\uDD19"),
+                        "Bem vindo de volta ${usuario.nome}!" + ("\uD83E\uDD19"),
                         Toast.LENGTH_LONG
                     ).show()
-                    buscaProdutosUsuario()
+                    buscaProdutosUsuario(usuario.id)
                 }
             }
         }
     }
 
-    private suspend fun buscaProdutosUsuario() {
-        produtoDao.buscaTodosComFlow().collect { produtos ->
+    private suspend fun buscaProdutosUsuario(usuarioId : String) {
+        idUsuarioLogado = usuarioId
+        produtoDao.buscaProdutosPorUsuario(usuarioId).collect { produtos ->
             adapter.atualiza(produtos)
         }
     }
@@ -65,19 +69,19 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         lifecycleScope.launch {
             produtosOrdenado = when (item.itemId) {
                 R.id.menu_ordenacao_item_nome_desc ->
-                    produtoDao.ordenaPorNomeDesc()
+                    produtoDao.ordenaPorNomeDesc(idUsuarioLogado)
                 R.id.menu_ordenacao_item_nome_asc ->
-                    produtoDao.ordenaPorNomeAsc()
+                    produtoDao.ordenaPorNomeAsc(idUsuarioLogado)
                 R.id.menu_ordenacao_item_desc_desc ->
-                    produtoDao.ordenaPorDescricaoDesc()
+                    produtoDao.ordenaPorDescricaoDesc(idUsuarioLogado)
                 R.id.menu_ordenacao_item_desc_asc ->
-                    produtoDao.ordenaPorDescricaoAsc()
+                    produtoDao.ordenaPorDescricaoAsc(idUsuarioLogado)
                 R.id.menu_ordenacao_item_valor_desc ->
-                    produtoDao.ordenaPorValorDesc()
+                    produtoDao.ordenaPorValorDesc(idUsuarioLogado)
                 R.id.menu_ordenacao_item_valor_asc ->
-                    produtoDao.ordenaPorValorAsc()
+                    produtoDao.ordenaPorValorAsc(idUsuarioLogado)
                 R.id.menu_ordenacao_item_sem_ordenacao ->
-                    produtoDao.buscaTodos()
+                    produtoDao.buscaTodos(idUsuarioLogado)
                 else -> null
             }
             produtosOrdenado?.let {

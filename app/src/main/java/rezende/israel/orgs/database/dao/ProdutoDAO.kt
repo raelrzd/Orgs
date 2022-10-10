@@ -7,11 +7,14 @@ import rezende.israel.orgs.model.Produto
 @Dao
 interface ProdutoDAO {
 
-    @Query("SELECT * FROM Produto")
-    suspend fun buscaTodos(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId")
+    suspend fun buscaTodos(usuarioId: String): List<Produto>
 
     @Query("SELECT * FROM Produto")
     fun buscaTodosComFlow(): Flow<List<Produto>>
+
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId")
+    fun buscaProdutosPorUsuario(usuarioId : String) : Flow<List<Produto>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun salva(vararg produto: Produto)
@@ -22,23 +25,23 @@ interface ProdutoDAO {
     @Query("SELECT * FROM Produto WHERE id = :id")
     fun buscaPorId(id: Long): Flow<Produto?>
 
-    @Query("SELECT * FROM Produto ORDER BY nome DESC")
-    suspend fun ordenaPorNomeDesc(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId ORDER BY nome DESC")
+    suspend fun ordenaPorNomeDesc(usuarioId : String): List<Produto>
 
-    @Query("SELECT * FROM Produto ORDER BY nome ASC")
-    suspend fun ordenaPorNomeAsc(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId ORDER BY nome ASC")
+    suspend fun ordenaPorNomeAsc(usuarioId : String): List<Produto>
 
-    @Query("SELECT * FROM Produto ORDER BY descricao DESC")
-    suspend fun ordenaPorDescricaoDesc(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId ORDER BY descricao DESC")
+    suspend fun ordenaPorDescricaoDesc(usuarioId : String): List<Produto>
 
-    @Query("SELECT * FROM Produto ORDER BY descricao ASC")
-    suspend fun ordenaPorDescricaoAsc(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId ORDER BY descricao ASC")
+    suspend fun ordenaPorDescricaoAsc(usuarioId : String): List<Produto>
 
-    @Query("SELECT * FROM Produto ORDER BY valor DESC")
-    suspend fun ordenaPorValorDesc(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId ORDER BY valor DESC")
+    suspend fun ordenaPorValorDesc(usuarioId : String): List<Produto>
 
-    @Query("SELECT * FROM Produto ORDER BY valor ASC")
-    suspend fun ordenaPorValorAsc(): List<Produto>
+    @Query("SELECT * FROM Produto WHERE usuarioId = :usuarioId ORDER BY valor ASC")
+    suspend fun ordenaPorValorAsc(usuarioId : String): List<Produto>
 
 
 }
