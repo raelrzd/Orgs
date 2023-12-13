@@ -37,21 +37,19 @@ class ListaProdutosActivity : UsuarioBaseActivity() {
         configuraRecyclerView()
 
         lifecycleScope.launch {
-            launch {
-                usuario.filterNotNull().collect { usuario ->
-                    idUsuarioLogado = usuario.id
-                    Toast.makeText(
-                        this@ListaProdutosActivity,
-                        "Bem vindo de volta ${usuario.nome}!" + ("\uD83E\uDD19"),
-                        Toast.LENGTH_LONG
-                    ).show()
-                    buscaProdutosUsuario(usuario.id)
-                }
+            usuario.filterNotNull().collect { usuario ->
+                idUsuarioLogado = usuario.id
+                Toast.makeText(
+                    this@ListaProdutosActivity,
+                    "Bem vindo de volta ${usuario.nome}!" + ("\uD83E\uDD19"),
+                    Toast.LENGTH_LONG
+                ).show()
+                buscaProdutosUsuario(usuario.id)
             }
         }
     }
 
-    private suspend fun buscaProdutosUsuario(usuarioId : String) {
+    private suspend fun buscaProdutosUsuario(usuarioId: String) {
         idUsuarioLogado = usuarioId
         produtoDao.buscaProdutosPorUsuario(usuarioId).collect { produtos ->
             adapter.atualiza(produtos)
